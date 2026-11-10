@@ -12,7 +12,8 @@ reproducible style — written so you can work through it without prior knowledg
 The projects are fully platform-neutral: a project created on Windows builds
 unchanged on Linux and vice versa, because the whole build lives in versioned text
 files (CMakeLists, presets, toolchain file), not in IDE settings. Where the steps
-differ, this guide shows **Linux (Fedora)** and **Windows** side by side.
+differ, this guide shows **Linux** (Fedora and Debian/Ubuntu) and **Windows** side by
+side.
 
 > **Shell commands:** `cmake`, `git`, `gh` and `STM32_Programmer_CLI` are typed the
 > same way in a Linux terminal and in Windows PowerShell. Paths are written with `/`;
@@ -131,7 +132,8 @@ Terminal = dialogue with the system.**
 From st.com → search "STM32CubeCLT" → Get Software (an ST account or e-mail is
 required).
 
-**Linux (Fedora):** download the *Generic Linux Installer*, then:
+**Linux:** download the *Generic Linux Installer* (the same file for Fedora, Debian and
+Ubuntu), then:
 
 ```bash
 cd ~/Downloads
@@ -173,15 +175,18 @@ CMake.
 
 ### 1.3 Base tools and VS Code
 
-**Linux (Fedora):**
+**Linux:**
 
 ```bash
-sudo dnf install cmake ninja-build git gh
+sudo dnf install cmake ninja-build git gh       # Fedora
+sudo apt install cmake ninja-build git gh       # Debian/Ubuntu
 ```
 
-Install VS Code as an **RPM from the Microsoft repository** — **NOT as a Flatpak**
-from GNOME Software/Discover! The Flatpak sandbox blocks access to the toolchain under
-/opt/st and to the ST-Link (learned the hard way):
+Install VS Code from **Microsoft's own package** — **NOT as a Flatpak** (or Snap) from
+GNOME Software/Discover/the App Center! The sandbox blocks access to the toolchain under
+/opt/st and to the ST-Link (learned the hard way).
+
+Fedora (RPM from the Microsoft repository):
 
 ```bash
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -194,6 +199,14 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 sudo dnf install code
+```
+
+Debian/Ubuntu: download the `.deb` from
+[code.visualstudio.com](https://code.visualstudio.com/download) and install it; it adds
+the Microsoft repository, so `apt upgrade` keeps VS Code current:
+
+```bash
+sudo apt install ./code_*.deb
 ```
 
 **Windows** (CMake and Ninja already came with CubeCLT):
@@ -370,7 +383,8 @@ ROM bootloader runs over UART instead). Two ways:
 
 ```bash
 # Linux:
-sudo dnf install dfu-util                  # flash tool; the script dfuse-pack.py
+sudo dnf install dfu-util                  # Fedora; Debian/Ubuntu: sudo apt install dfu-util
+                                           # flash tool; the script dfuse-pack.py
                                            # is in the source repo of the dfu-util project
 python3 dfuse-pack.py -i build/Release/Project123.hex -D 0x0483:0xdf11 Project123.dfu
 ```
@@ -1249,7 +1263,7 @@ mv .vscode/.vscode/* .vscode/ && rmdir .vscode/.vscode   # if nested
 
 **Linux: `bash: code: command not found`**
 VS Code is installed as a Flatpak (check: `flatpak list | grep -i code`). Remove the
-Flatpak and install the RPM version from step 1.3 — the Flatpak sandbox does not get along
+Flatpak and install Microsoft's package from step 1.3 (RPM or .deb) — the Flatpak sandbox does not get along
 with the toolchain and the ST-Link.
 
 **Linux: `arm-none-eabi-gcc: command not found` right after installing CubeCLT**
